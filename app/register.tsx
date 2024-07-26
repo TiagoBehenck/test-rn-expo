@@ -23,7 +23,7 @@ export default function RegisterFormScreen() {
       confirmPassword: '',
     },
     onSubmit: (values: Form) => {
-      router.push('/home');
+      router.push('(tabs)');
     },
   });
 

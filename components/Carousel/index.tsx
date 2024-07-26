@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dimensions, Image, Text, View } from "react-native";
+import { Dimensions, Image, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, {
   ICarouselInstance,
@@ -7,14 +7,6 @@ import Carousel, {
 } from "react-native-reanimated-carousel";
  
 const PAGE_WIDTH = Dimensions.get("window").width;
-const colors = [
-  "#26292E",
-  "#899F9C",
-  "#B3C680",
-  "#5C6265",
-  "#F5D399",
-  "#F1F1F1",
-];
  
 const data = [
   require('../../assets/images/astro.png'),
@@ -29,43 +21,32 @@ export function CarouselComponent() {
   const ref = React.useRef<ICarouselInstance>(null);
  
   const baseOptions = {
-        vertical: false,
-        width: PAGE_WIDTH,
-        height: PAGE_WIDTH * 0.6,
-    };
+    vertical: false,
+    width: PAGE_WIDTH,
+    height: PAGE_WIDTH * 0.6,
+  };
 
   const onPressPagination = (index: number) => {
     ref.current?.scrollTo({
-      /**
-       * Calculate the difference between the current index and the target index
-       * to ensure that the carousel scrolls to the nearest index
-       */
       count: index - progress.value,
       animated: true,
     });
   };
  
   return (
-    <View
-      style={{
-        alignItems: "center",
-      }}
-    >
+    <View style={{ alignItems: "center" }}>
       <Carousel
         ref={ref}
-        {...baseOptions}
-        style={{
-          width: PAGE_WIDTH,
-        }}
-        loop
-        autoPlayInterval={1500}
+        style={{ width: PAGE_WIDTH }}
         onProgressChange={progress}
         mode="parallax"
         modeConfig={{
           parallaxScrollingScale: 0.9,
           parallaxScrollingOffset: 50,
         }}
-        data={colors}
+        data={data}
+        loop
+        {...baseOptions}
         renderItem={({ index }) => (
           <View>
             <Image
@@ -84,7 +65,7 @@ export function CarouselComponent() {
 
       <Pagination.Basic<{ color: string }>
         progress={progress}
-        data={colors.map((color) => ({ color }))}
+        data={data.map((index) => ({ color: data[index] }))}
         size={8}
         dotStyle={{
           borderRadius: 100,
