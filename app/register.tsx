@@ -1,22 +1,95 @@
 import { Input } from "@/components/Input";
-import { Link } from "expo-router";
-import { Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Link, router } from "expo-router";
+import { Formik, useFormik } from "formik";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { z } from "zod";
+import { toFormikValidate } from "zod-formik-adapter";
+
+const FormSchema = z.object({
+    name: z.string().min(3, 'Nome precisa ter 3 caracteres'),
+    email: z.string().email('E-mail inválido'),
+    password: z.string().min(6, 'Senha precisa ter 6 ou mais caracteres'),
+    confirmPassword: z.string().min(6, 'Senha precisa ter 6 ou mais caracteres'),
+});
+
+type FormValues = z.infer<typeof FormSchema>;
 
 export default function RegisterFormScreen() {
+    const { initialValues, handleSubmit } = useFormik({
+        initialValues: {
+            name: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+        },
+        onSubmit: (values: FormValues) => {
+            console.log(values);
+
+            router.push('(tabs)');
+        },
+    })
+
     return (
         <View style={styles.container}>
             <Image style={styles.logo} source={require("../assets/images/logo.png")} />
             <Text style={styles.title}>Nebula Nectar</Text>
 
-            <Input placeholder="Nome Completo" iconName="person-outline" />
-            <Input placeholder="E-mail" iconName="mail-outline" />
-            <Input placeholder="Senha" iconName="lock-closed-outline" />
-            <Input placeholder="Senha (confirmar)" iconName="lock-closed-outline" />
-            
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Cadastrar</Text>
-            </TouchableOpacity>
+            <Formik
+                initialValues={initialValues}
+                onSubmit={() => handleSubmit()}
+                validate={toFormikValidate(FormSchema)}
+            >
+                {({ handleChange, handleBlur, handleSubmit, values, touched, errors }) => (
+                    <>
+                        <Input 
+                            placeholder="Nome Completo"
+                            iconName="person-outline"
+                            onChangeText={handleChange('name')}
+                            onBlur={handleBlur('name')}
+                            value={values.name}
+                        />
+                        {(errors.name && touched.name) && <Text style={styles.error}>{errors.name}</Text>}
+
+                        <Input
+                            iconName="mail-outline"
+                            placeholder="E-mail" 
+                            onChangeText={handleChange('email')}
+                            onBlur={handleBlur('email')}
+                            textContentType='emailAddress'
+                            autoComplete='email'
+                            autoCapitalize='none'
+                            value={values.email}
+                            />
+                            {(errors.email && touched.email) && <Text style={styles.error}>{errors.email}</Text>}
+                        
+                            <Input
+                            isPassword
+                            iconName="lock-closed-outline"
+                            placeholder="Senha"
+                            onChangeText={handleChange('password')}
+                            onBlur={handleBlur('password')}
+                            value={values.password}
+                            />
+                            {(errors.password && touched.password) && <Text style={styles.error}>{errors.password}</Text>}
+
+                            <Input
+                            isPassword
+                            iconName="lock-closed-outline"
+                            placeholder="Senha (confirmar)"
+                            onChangeText={handleChange('confirmPassword')}
+                            onBlur={handleBlur('confirmPassword')}
+                            value={values.confirmPassword}
+                            />
+                            {(errors.confirmPassword && touched.confirmPassword) && <Text style={styles.error}>{errors.confirmPassword}</Text>}
+                            
+                            <TouchableOpacity style={styles.button} onPress={() => handleSubmit()}>
+                                <Text style={styles.buttonText}>Cadastrar</Text>
+                            </TouchableOpacity>
+                    </>
+                )}
+            </Formik>
+          
             <Text style={styles.text}>
                 Já tem conta?
                 <Link href="/" style={styles.signIn}> Faça o login </Link>
@@ -67,5 +140,11 @@ const styles = StyleSheet.create({
     signIn: { 
         color: '#F18F35',
         fontFamily: 'PoppinsBold'
+      },
+      error: { 
+        color: '#CC31A3',
+        fontFamily: 'PoppinsBold',
+        fontSize: 12,
+        paddingBottom: 8,
       },
 })
