@@ -23,6 +23,8 @@ export default function RegisterFormScreen() {
       confirmPassword: '',
     },
     onSubmit: (values: Form) => {
+      console.log(values);
+
       router.push('(tabs)');
     },
   });
@@ -54,6 +56,8 @@ export default function RegisterFormScreen() {
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               textContentType='emailAddress'
+              autoComplete='email'
+              autoCapitalize='none'
               value={values.email}
             />
             {(errors.email && touched.email) && <Text style={styles.error}>{errors.email}</Text>}
