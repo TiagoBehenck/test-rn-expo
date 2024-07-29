@@ -1,20 +1,11 @@
-import { useState } from "react";
 import { Image, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import { styles } from './styles'
+import { useCountStore } from "@/state/hooks/cart";
 
 export function ProductCard() {
-    const [quantity, setQuantity] = useState(0);
-
-    const handleMinus = () => {
-      if (quantity === 0) return;
-      setQuantity(quantity - 1);
-    }
-
-    const handlePlus = () => {
-      setQuantity(quantity + 1);
-    }
+    const { increment, decrement, count } = useCountStore();
 
     return (
         <>
@@ -45,14 +36,14 @@ export function ProductCard() {
                 </View>
 
                     <View style={styles.wrapperButton}>
-                        <TouchableOpacity style={styles.minus} onPress={handleMinus} disabled={quantity === 0}>
+                        <TouchableOpacity style={styles.minus} onPress={() => decrement(1)} disabled={count === 0}>
                             <Text style={styles.minusText}> - </Text>
                         </TouchableOpacity>
 
                         <View style={styles.quantity}>
-                            <Text style={styles.quantityText}> {quantity} </Text>
+                            <Text style={styles.quantityText}> {count} </Text>
                         </View>
-                        <TouchableOpacity style={styles.plus} onPress={handlePlus}>
+                        <TouchableOpacity style={styles.plus} onPress={() => increment(1)}>
                             <Text style={styles.plusText}> + </Text>
                         </TouchableOpacity>
                     </View>
